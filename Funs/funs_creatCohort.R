@@ -199,6 +199,7 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
       select(-idx_dt) %>%
       select(-firstdt) %>%
       select(-idxyr) %>%
+      select(-last_from_dt) %>%
       group_by(new_pat_id) %>%
       do(sample_n(., 1)) %>%
       #       select(-new_pat_id) %>%
@@ -307,10 +308,9 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
     cat('pre_dmts get successfully!\n')
     dim(dtCoh) #[1] 383 412
     varLst_f1 <- names(dtCoh)
-    flag <- "withoutTransf"
-    
+    flag <- ifelse(bTransf, "withTransf", "withoutTransf")
     if(bQcMode==T){
-      if(any(c("idx_dt", "firstdt", 'idxyr', 'tblcoh') %in% varLst_f1)){
+      if(any(c("idx_dt", "firstdt", 'idxyr', 'tblcoh', 'last_from_dt') %in% varLst_f1)){
         stop("the 4 variables, idx_dt, firstdt, idxyr, tblcoh, have not been removed completely!\n")
       }  
     }
@@ -318,9 +318,7 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
     if(bTransf==T){
       cat('bTransf:', bTransf, '\n')
       
-      flag <- "withTransf"
       varClfList <- varClassify(dtCoh)
-      varDefCati <- c("idx_rx", 'gender', 'birth_region', 'init_symptom')
       var2merge <- setdiff(varDefCati, c(varClfList$naVars, varClfList$cansVars, varClfList$biVars))
       
       # new_pat_id should not be transformed
@@ -395,7 +393,7 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
     dtCohCharRepNA <- as.data.frame(t(ldply(lapply(charVars, function(var){
       vct <- dtCohChar[, var]
       char <- as.character(vct)
-      char[is.na(char)] <- 999
+      char[is.na(char)] <- "missing"
       # fct <- as.factor(char)
       return(char)
     }), quickdf)))

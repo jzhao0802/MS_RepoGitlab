@@ -13,11 +13,11 @@ main.inDir <- "F:\\Jie\\MS\\01_Data\\"
 
 main.timeStamp <- as.character(Sys.time())
 main.timeStamp <- gsub(":", ".", main.timeStamp)  # replace ":" by "."
-main.outDir <- paste("./03_Result/",  main.timeStamp, "/", sep = '')
+main.outDir <- paste("./03_CohortData/",  main.timeStamp, "/", sep = '')
 dir.create(main.outDir, showWarnings = TRUE, recursive = TRUE, mode = "0777")
 main.bTransf <- T
 main.bTest <- F
-main.inFileNm <- "MS_decsupp_analset_20160614"
+main.inFileNm <- "MS_decsupp_analset_20160630"
 main.inFileExt <- ".csv"
 
 main.cohortLst <- 1:5
@@ -31,7 +31,7 @@ main.outcomeLst <- c("edssprog"
 
 main.na_represents <- c('', 'NA', 'unknown', 'ambiguous')
 
-main.varDefCati <- c("idx_rx", 'gender', 'birth_region', 'init_symptom')
+main.varDefCati <- c("idx_rx", 'gender', 'birth_region')
 
 main.threshold4merge <- 0.1
 
