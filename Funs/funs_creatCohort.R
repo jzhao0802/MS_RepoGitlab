@@ -28,7 +28,7 @@ varClassify <- function(dt){
   return(varClf)
 }
 
-merge4CatiVars <- function(var, dtCoh, threshold){
+merge4CatiVars <- function(var, dtCoh, threshold, bQcMode){
   vct <- dtCoh[, var]
   tb <- table(vct)
   prob <- prop.table(tb)
@@ -52,6 +52,11 @@ merge4CatiVars <- function(var, dtCoh, threshold){
     }else{
       break
     }
+  }
+  if(bQcMode==T){
+      if(length(unique(rownames(refTb))) != length(rownames(refTb))){
+          stop("there are dupliced varable levels after merging!\n")
+      }
   }
   return(vct)
 }
