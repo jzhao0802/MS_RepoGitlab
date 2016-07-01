@@ -41,11 +41,12 @@ merge4CatiVars <- function(var, dtCoh, threshold){
   
   for(i in 1:nrow(refTb)){
     if(refTb$prob[1] < threshold){
-      lvsB4merge <- rownames(refTb)[1:(1+1)]
+      oriRowNm <- rownames(refTb)
+      lvsB4merge <- oriRowNm[1:(1+1)]
       mergeLvs <-paste0(lvsB4merge, collapse = ' OR ')
       merge <- apply(refTb[1:(1+1),], 2, sum)
       refTb <- rbind(merge, refTb[-(1:(1+1)), ])
-      rownames(refTb)[1] <- mergeLvs
+      rownames(refTb) <- c(mergeLvs, oriRowNm[-c(1:2)])
       refTb <- refTb[order(refTb$cnt), ]
       vct <- ifelse(vct %in% lvsB4merge, mergeLvs, vct)
     }else{
