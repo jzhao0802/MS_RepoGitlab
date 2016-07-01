@@ -337,11 +337,23 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
       dtCoh <- as.data.frame(dtCoh)
       
       dt2quartile <- as.data.frame(t(ldply(lapply(var2quartileBnumeric, function(var){
-        
-        varVct <- dtCoh[, var]
-        rowQuartile <- as.character(cut(varVct
-                                        , breaks=unique(quantile(varVct, probs=seq(0, 1, by=1/4), na.rm=T))
-                                        , include.lowest = T))
+          varVct <- dtCoh[, var]
+          
+        if(var != 'age'){
+            rowQuartile <- as.character(cut(varVct
+                                            , breaks=unique(quantile(varVct, probs=seq(0, 1, by=1/4), na.rm=T))
+                                            , include.lowest = T))
+        }else{
+            rowQuartile <- as.character(cut(varVct
+                                            , breaks=c(min(varVct), 30, 40, 50, max(varVct))
+                                            , include.lowest = T))
+        }
+        if(bQcMode==T){
+            minCatiCnt <- min(table(rowQuartile))
+            if(minCatiCnt < threshold*length(rowQuartile)){
+                stop("for var2quartileBnumeric variables, there are categories which are less than ", threshold, '!\n')
+            }
+        }
         return(rowQuartile)
       }), quickdf)))
       
