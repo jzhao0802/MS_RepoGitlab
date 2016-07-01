@@ -368,7 +368,7 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
       names(dt2mergeGrad) <- var2quartileBchar
       cat("\nfor var2quartileBchar, mergeGrad successfully!\n")
       dt2merge <- as.data.frame(t(ldply(lapply(var2merge
-                                               , function(var)merge4CatiVars(var, dtCoh, threshold ))
+                                               , function(var)merge4CatiVars(var, dtCoh, threshold, bQcMode=bQcMode))
                                         , quickdf)))
       names(dt2merge) <- var2merge
       cat("\n for var2merge, mergeWithoutGrad successfully!\n")
