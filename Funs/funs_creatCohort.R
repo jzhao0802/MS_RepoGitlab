@@ -527,6 +527,8 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
       as.data.frame(.)
     cat("\ndummy final!\n")
     
+    # replace . using dot
+    names(dtCohFinal1) <- gsub('\\.', 'dot', names(dtCohFinal1))
 #     re <- lapply(outcomeLst, function(outcome){
 #       dtCohFinal1$response <- dtCohFinal1[, outcome]
 #       # remove outcome varibles list
