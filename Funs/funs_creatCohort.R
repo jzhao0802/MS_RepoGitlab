@@ -529,6 +529,9 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
     
     # replace . using dot
     names(dtCohFinal1) <- gsub('\\.', 'dot', names(dtCohFinal1))
+    # replace loc__-1 using loc__neg1
+     names(dtCohFinal1) <- gsub("(^.+loc__)(-)(\\d)", "\\1\\neg\\3", names(dtCohFinal1))
+     
 #     re <- lapply(outcomeLst, function(outcome){
 #       dtCohFinal1$response <- dtCohFinal1[, outcome]
 #       # remove outcome varibles list
