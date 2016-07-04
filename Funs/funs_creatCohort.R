@@ -315,10 +315,10 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
     }
     cat('pre_dmts get successfully!\n')
     dim(dtCoh) #[1] 383 412
-    varLst_f1 <- names(dtCoh)
     flag <- ifelse(bTransf, "withTransf", "withoutTransf")
     dtCoh <- dtCoh[, !grepl(paste0(rxLst, collapse = '|'), names(dtCoh))] %>%
         select(-idx_rx)
+    varLst_f1 <- names(dtCoh)
     
     if(bQcMode==T){
       if(any(c("idx_dt", "firstdt", 'idxyr', 'tblcoh', 'last_from_dt', 'idx_rx', "has2edss_conf3"
@@ -346,6 +346,12 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
           varVct <- dtCoh[, var]
           
         if(var != 'age'){
+            uniq_quantile <- unique(quantile(varVct, probs=seq(0, 1, by=1/4), na.rm=T))
+            if(length(uniq_qrantile)==2){
+                rowQuartile <- as.character(cut(varVct
+                                                , breaks=uniq_quantile
+                                                , include.lowest = T))
+            }
             rowQuartile <- as.character(cut(varVct
                                             , breaks=unique(quantile(varVct, probs=seq(0, 1, by=1/4), na.rm=T))
                                             , include.lowest = T))
