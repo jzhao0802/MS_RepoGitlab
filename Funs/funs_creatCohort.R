@@ -321,7 +321,7 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
         select(-idx_rx)
     
     if(bQcMode==T){
-      if(any(c("idx_dt", "firstdt", 'idxyr', 'tblcoh', 'last_from_dt', 'idx_rx'
+      if(any(c("idx_dt", "firstdt", 'idxyr', 'tblcoh', 'last_from_dt', 'idx_rx', "has2edss_conf3"
                , grep(paste0(rxLst, collapse = '|'), names(dt), value = T)) %in% varLst_f1)){
         stop("the variables, idx_dt, firstdt, idxyr, tblcoh, rx_XXXX, have not been removed completely!\n")
       }  
