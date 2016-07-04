@@ -287,6 +287,11 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
     dtCoh$pre_dmts_2 <- apply(dtCoh_forDmts[, var_preDmt_2], 1, sum, na.rm=T)
     dtCoh$pre_dmts_3 <- apply(dtCoh_forDmts[, var_preDmt_3], 1, sum, na.rm=T)
     dtCoh$pre_dmts_4 <- apply(dtCoh_forDmts[, var_preDmt_4], 1, sum, na.rm=T)
+    rxLst <- c("rx_fing_", "rx_ga_"
+               , "rx_nat_", "rx_ext_"
+               , "rx_bet_", "rx_avo_"
+               , "rx_reb_", "rx_tecf_"
+               , "rx_teri_", "rx_alem_")
     if(bQcMode == T){
       if(any(dtCoh$pre_dmts_1 < apply(dtCoh[, var_preDmt_1], 1, sum, na.rm=T))
          & all(dtCoh$pre_dmts_2 < apply(dtCoh[, var_preDmt_2], 1, sum, na.rm=T))
@@ -295,11 +300,7 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
          ){
         stop("the pre Dmts number is wrong!\n\n")
       }
-      rxLst <- c("rx_fing_", "rx_ga_"
-                 , "rx_nat_", "rx_ext_"
-                 , "rx_bet_", "rx_avo_"
-                 , "rx_reb_", "rx_tecf_"
-                 , "rx_teri_", "rx_alem_")
+     
       for(yr in 1:4){
         qcFlag <- unlist(lapply(1:10, function(rxIdx){
           dtCohRx <- dtCoh %>% filter(idx_rx==rxIdx & paste0(rxLst, yr)[rxIdx]==yr)
@@ -353,8 +354,9 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
           cat(var, '\n')
           bTolerance <- F
           varVct <- dtCoh[, var]
+          uniq_quantile <- unique(quantile(varVct, probs=seq(0, 1, by=1/4), na.rm=T, type = 1))
+          
           if(var != 'age'){
-              uniq_quantile <- unique(quantile(varVct, probs=seq(0, 1, by=1/4), na.rm=T))
               if(length(uniq_quantile)==2){
                   rowQuartileTolLst <- merge4withGradCatiVars(var, dtCoh, threshold)
                   rowQuartile <- rowQuartileTolLst$vct
@@ -362,13 +364,18 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
               }else{
                   rowQuartile <- as.character(cut(varVct
                                                   , breaks=uniq_quantile
-                                                  , include.lowest = T))
+                                                  , include.lowest = T
+                                                  , dig.lab=10)
+                                            )
+                 
               }
               
           }else{
               rowQuartile <- as.character(cut(varVct
                                               , breaks=c(min(varVct), 30, 40, 50, max(varVct))
-                                              , include.lowest = T))
+                                              , include.lowest = T
+                                              , dig.lab=10)
+                                         )
           }
           #         if(bQcMode==T){
           #             if(bTolerance==F){
@@ -379,6 +386,35 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
           #             }
           #             
           #         }
+          
+          # rename quartile names
+          if(length(uniq_quantile) > 2){
+              
+              orgLvsOrder <- sort(setdiff(unique(varVct, na.rm=T), NA))
+              qtlLvs <- names(table(rowQuartile))
+              newCatLst <- unlist(lapply(qtlLvs, function(qtl){
+                  q <- gsub("(^\\W)(.+\\])", "\\1", qtl)
+                  fNum <- as.numeric(gsub("(^\\W)(.+)(\\,)(.+)(\\W$)", "\\2", qtl))
+                  lstNum <- as.numeric(gsub("(^\\W)(.+)(\\,)(.+)(\\W$)", "\\4", qtl))
+                  
+                  if(q=="["){
+                      firNum <- fNum
+                  }else if(q=="("){
+                      firNum <- orgLvsOrder[which(orgLvsOrder==fNum)+1]
+                  }
+                  
+                  if(firNum==lstNum){
+                      newCate <- as.character(firNum)
+                  }else{
+                      newCate <- paste0(firNum, '_', lstNum)
+                  }
+                  return(newCate)
+              }))
+              lookupDf <- data.frame(old=qtlLvs, new=newCatLst)
+              for(iQtl in 1:nrow(lookupDf)){
+                  rowQuartile[rowQuartile==as.character(lookupDf[iQtl, 'old'])] <- as.character(lookupDf[iQtl, 'new'])
+              }
+          }
           return(list(rowQuartile=rowQuartile, bTolerance=bTolerance))
       })
       
