@@ -206,6 +206,8 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
       select(-firstdt) %>%
       select(-idxyr) %>%
       select(-last_from_dt) %>%
+        select(-has2edss_conf3) %>%
+        select(-contains("pegint")) %>%
       group_by(new_pat_id) %>%
       do(sample_n(., 1)) %>%
       #       select(-new_pat_id) %>%
@@ -315,9 +317,13 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
     dim(dtCoh) #[1] 383 412
     varLst_f1 <- names(dtCoh)
     flag <- ifelse(bTransf, "withTransf", "withoutTransf")
+    dtCoh <- dtCoh[, !grepl(paste0(rxLst, collapse = '|'), names(dtCoh))] %>%
+        select(-idx_rx)
+    
     if(bQcMode==T){
-      if(any(c("idx_dt", "firstdt", 'idxyr', 'tblcoh', 'last_from_dt') %in% varLst_f1)){
-        stop("the 4 variables, idx_dt, firstdt, idxyr, tblcoh, have not been removed completely!\n")
+      if(any(c("idx_dt", "firstdt", 'idxyr', 'tblcoh', 'last_from_dt', 'idx_rx'
+               , grep(paste0(rxLst, collapse = '|'), names(dt), value = T)) %in% varLst_f1)){
+        stop("the variables, idx_dt, firstdt, idxyr, tblcoh, rx_XXXX, have not been removed completely!\n")
       }  
     }
     
