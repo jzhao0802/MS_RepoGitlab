@@ -64,6 +64,7 @@ merge4CatiVars <- function(var, dtCoh, threshold, bQcMode){
 
 
 merge4withGradCatiVars <- function(var, dtCoh, threshold){
+    bTolerance=F
   vct <- dtCoh[, var]
   tb <- table(vct)
   prob <- prop.table(tb)
@@ -76,12 +77,17 @@ merge4withGradCatiVars <- function(var, dtCoh, threshold){
   }
 
   for(i in 1:nrow(refTb)){
+      cat(i, '\n')
     minIdx <- which(refTb$prob == min(refTb$prob))
     if(length(minIdx)>1){
       minIdx <- sample(minIdx, 1)
     }
     minProb <- refTb$prob[minIdx]
     if(minProb < threshold ){
+        if(nrow(refTb)==2){
+            bTolerance=T
+            break
+        }
       if(minIdx == 1){
         idx2merge <- c(1,2)
         lvsB4merge <- rownames(refTb)[idx2merge]
@@ -110,7 +116,7 @@ merge4withGradCatiVars <- function(var, dtCoh, threshold){
           rownames(refTb)[1] <- mergeLvs
 
         }else{
-          refTb <- rbind(refTb[min(idx2merge)-1,]
+          refTb <- rbind(refTb[1:(min(idx2merge)-1),]
                          , merge
                          , refTb[-(1:max(idx2merge)),])
           rownames(refTb)[min(idx2merge)] <- mergeLvs
@@ -119,11 +125,12 @@ merge4withGradCatiVars <- function(var, dtCoh, threshold){
       }
       
       vct <- ifelse(vct %in% lvsB4merge, mergeLvs, vct)
+      
     }else{
       break
     }
   }
-  return(vct)
+  return(list(vct=vct, bTolerance=bTolerance))
 }
 
 
@@ -342,42 +349,54 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
       #                                     include.lowest=TRUE))
       dtCoh <- as.data.frame(dtCoh)
       
-      dt2quartile <- as.data.frame(t(ldply(lapply(var2quartileBnumeric, function(var){
+      temp1 <- lapply(var2quartileBnumeric, function(var){
+          cat(var, '\n')
+          bTolerance <- F
           varVct <- dtCoh[, var]
-          
-        if(var != 'age'){
-            uniq_quantile <- unique(quantile(varVct, probs=seq(0, 1, by=1/4), na.rm=T))
-            if(length(uniq_qrantile)==2){
-                rowQuartile <- as.character(cut(varVct
-                                                , breaks=uniq_quantile
-                                                , include.lowest = T))
-            }
-            rowQuartile <- as.character(cut(varVct
-                                            , breaks=unique(quantile(varVct, probs=seq(0, 1, by=1/4), na.rm=T))
-                                            , include.lowest = T))
-        }else{
-            rowQuartile <- as.character(cut(varVct
-                                            , breaks=c(min(varVct), 30, 40, 50, max(varVct))
-                                            , include.lowest = T))
-        }
-        if(bQcMode==T){
-            minCatiCnt <- min(table(rowQuartile))
-            if(minCatiCnt < threshold*length(rowQuartile)){
-                stop("for var2quartileBnumeric variables, there are categories which are less than ", threshold, '!\n')
-            }
-        }
-        return(rowQuartile)
-      }), quickdf)))
+          if(var != 'age'){
+              uniq_quantile <- unique(quantile(varVct, probs=seq(0, 1, by=1/4), na.rm=T))
+              if(length(uniq_quantile)==2){
+                  rowQuartileTolLst <- merge4withGradCatiVars(var, dtCoh, threshold)
+                  rowQuartile <- rowQuartileTolLst$vct
+                  bTolerance <- rowQuartileTolLst$bTolerance
+              }else{
+                  rowQuartile <- as.character(cut(varVct
+                                                  , breaks=uniq_quantile
+                                                  , include.lowest = T))
+              }
+              
+          }else{
+              rowQuartile <- as.character(cut(varVct
+                                              , breaks=c(min(varVct), 30, 40, 50, max(varVct))
+                                              , include.lowest = T))
+          }
+          #         if(bQcMode==T){
+          #             if(bTolerance==F){
+          #                 minCatiCnt <- min(table(rowQuartile))
+          #                 if(minCatiCnt < threshold*length(rowQuartile)){
+          #                     stop("for var2quartileBnumeric variables, there are categories which are less than ", threshold, '!\n')
+          #                 }
+          #             }
+          #             
+          #         }
+          return(list(rowQuartile=rowQuartile, bTolerance=bTolerance))
+      })
+      
+      dt2quartile <- as.data.frame(t(ldply(lapply(temp1, function(x)x$rowQuartile), quickdf)))
+    
       
       names(dt2quartile) <- var2quartileBnumeric
       cat('\nfor var2quartileBnumeric, brak into quartile successfully!\n')
+      var2quartileBnumericBtolerance <- unlist(lapply(temp1, function(x)x$bTolerance))
       
       var2quartileBchar <- setdiff(var2quartile, var2quartileBnumeric)
       
-      dt2mergeGrad <- as.data.frame(t(ldply(lapply(var2quartileBchar
-                                                   , function(var)merge4withGradCatiVars(var, dtCoh, threshold))
+      temp2 <- lapply(var2quartileBchar
+             , function(var)merge4withGradCatiVars(var, dtCoh, threshold))
+      dt2mergeGrad <- as.data.frame(t(ldply(lapply(temp2, function(x)x$vct)
                                             , quickdf)))
       names(dt2mergeGrad) <- var2quartileBchar
+      var2quartileBcharBtolerance <- unlist(lapply(temp2, function(x)x$bTolerance))
       cat("\nfor var2quartileBchar, mergeGrad successfully!\n")
       dt2merge <- as.data.frame(t(ldply(lapply(var2merge
                                                , function(var)merge4CatiVars(var, dtCoh, threshold, bQcMode=bQcMode))
@@ -438,7 +457,26 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
     # turnto factor type
     dtCohChar2Fct <- as.data.frame(unclass(dtCohCharRepNA))
     
-    dtCohChar2Fct2Dummy <- getDummy(dtCohChar2Fct)
+    # renames the category namess
+    dtCohChar2FctAdd__ <- as.data.frame(t(ldply(lapply(names(dtCohChar2Fct), function(var){
+        vct <- dtCohChar2Fct[, var]
+        vct2 <- ifelse(is.na(vct), na, paste0('__', vct))
+        return(vct2)
+    }), quickdf)))
+    names(dtCohChar2FctAdd__) <- names(dtCohChar2Fct)
+    
+    dtCohChar2Fct2Dummy <- getDummy(dtCohChar2FctAdd__)
+    
+    varDummyReplaceSpace <- unlist(lapply(names(dtCohChar2Fct2Dummy), function(var){
+        var2 <- gsub(" ", "_", var)
+        return(var2)
+    }))
+    
+    if(bQcMode){
+        if(any(grepl(' ', names(varDummyReplaceSpace)))){
+            stop("the ' ' still exists!\n\n")
+        }
+    }
     
     if(bQcMode==T){
       otherLevExists <- sapply(dtCohChar2Fct2Dummy, function(vct)length(setdiff(unique(vct), c(0, 1)))>1)
