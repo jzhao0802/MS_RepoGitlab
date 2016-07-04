@@ -31,22 +31,35 @@ main.outcomeLst <- c("edssprog"
 
 main.na_represents <- c('', 'NA', 'unknown', 'ambiguous')
 
-main.varDefCati <- c("idx_rx", 'gender', 'birth_region')
+main.varDefCati <- c('gender', 'birth_region')
 
 main.threshold4merge <- 0.1
 
-# outDir <- main.outDir
-# inDir <- main.inDir
-# cohortLst <- main.cohortLst
-# outcomeLst <- main.outcomeLst
-# bCati <- main.bCati
-# bTest <- main.bTest
-# inFileNm <- main.inFileNm
-# inFileExt <- main.inFileExt
-# na_represents <- main.na_represents
-# varDefCati <- main.varDefCati
-# threshold <- main.threshold4merge
+outDir <- main.outDir
+inDir <- main.inDir
+cohortLst <- main.cohortLst
+outcomeLst <- main.outcomeLst
+bCati <- main.bCati
+bTest <- main.bTest
+inFileNm <- main.inFileNm
+inFileExt <- main.inFileExt
+na_represents <- main.na_represents
+varDefCati <- main.varDefCati
+threshold <- main.threshold4merge
 
+
+# temp_re <- createCohortTb(inDir=main.inDir
+#                           , inFileNm=main.inFileNm
+#                           , inFileExt=main.inFileExt
+#                           , outDir=main.outDir
+#                           , cohortLst=main.cohortLst
+#                           , outcomeLst=main.outcomeLst
+#                           , bTransf=F
+#                           , na_represents=main.na_represents
+#                           , varDefCati=main.varDefCati
+#                           , threshold=main.threshold4merge
+#                           , bTest=main.bTest
+#                           , bQcMode = T)
 
 temp_re <- createCohortTb(inDir=main.inDir
                           , inFileNm=main.inFileNm
@@ -54,7 +67,7 @@ temp_re <- createCohortTb(inDir=main.inDir
                           , outDir=main.outDir
                           , cohortLst=main.cohortLst
                           , outcomeLst=main.outcomeLst
-                          , bTransf=F
+                          , bTransf=T
                           , na_represents=main.na_represents
                           , varDefCati=main.varDefCati
                           , threshold=main.threshold4merge
