@@ -472,8 +472,10 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
         return(var2)
     }))
     
+    names(dtCohChar2Fct2Dummy) <- varDummyReplaceSpace
+    
     if(bQcMode){
-        if(any(grepl(' ', names(varDummyReplaceSpace)))){
+        if(any(grepl(' ', names(dtCohChar2Fct2Dummy)))){
             stop("the ' ' still exists!\n\n")
         }
     }
