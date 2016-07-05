@@ -191,6 +191,10 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
                    , stringsAsFactors = F
                    , na.strings = na_represents)
   cat("data readin successfully!\n")
+  
+  # add record number
+  dt$record_num <- 1:nrow(dt)
+  
   if(bTest == T){
     dt = dt[1:1000, ]
   }
@@ -223,6 +227,7 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
     varLst <- names(dtCoh)
     cat('\nline sample for duplicated patid!\n')
     
+    varsIgn <- c("new_pat_id", "record_num")
     if(bQcMode==T){
       if(nrow(dtCoh)!=length(unique((dtCoh$new_pat_id)))){
         stop("unique patient id select wrong!\n\n")
@@ -343,7 +348,8 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
       var2merge <- setdiff(varDefCati, c(varClfList$naVars, varClfList$cansVars, varClfList$biVars))
       
       # new_pat_id should not be transformed
-      var2quartile <- setdiff(c(varClfList$catVars, varClfList$contVars), c(var2merge, varClfList$biVars, 'new_pat_id'))
+      var2quartile <- setdiff(c(varClfList$catVars, varClfList$contVars)
+                              , c(var2merge, varClfList$biVars, varsIgn))
       var2quartileBnumeric <- setdiff(var2quartile, varClfList$charVars)
       
       #     temp <- with(dtCoh[, var2quartileBnumeric], cut(var2quartileBnumeric, 
@@ -464,7 +470,8 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
         lvs <- unique(x)
         length(setdiff(lvs, c(0, 1, NA))) > 0 & sum(!is.na(lvs)) < 3
       })
-      varNumB2dummy <- setdiff(numVars[b2dummy], "new_pat_id")
+      varNumB2dummy <- setdiff(numVars[b2dummy]
+                               , varsIgn)
       
       charVars <- c(charVars, varNumB2dummy)
       cat('\n for bTransf==T, add varNumB2dummy into charVars wich will be dummy later!\n')
