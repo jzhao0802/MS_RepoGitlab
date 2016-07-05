@@ -208,6 +208,7 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
     }else{
       stop("wrong input cohort index!\n")
     }
+    set.seed(20)
     dtCoh <- dtCoh %>%
       select(-idx_dt) %>%
       select(-firstdt) %>%
