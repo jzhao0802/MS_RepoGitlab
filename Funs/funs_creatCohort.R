@@ -183,7 +183,7 @@ getDummy <- function(temp_fct){
 
 createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
                            , cohortLst, outcomeLst, bTransf, na_represents
-                           , varDefCati, threshold, bTest, bQcMode){
+                           , varDefCati, threshold, bTest, bQcMode, seed){
   
   dt <- read.table(paste0(inDir, inFileNm, inFileExt)
                    , sep=','
@@ -212,7 +212,7 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
     }else{
       stop("wrong input cohort index!\n")
     }
-    set.seed(20)
+    set.seed(seed)
     dtCoh <- dtCoh %>%
       select(-idx_dt) %>%
       select(-firstdt) %>%
@@ -555,7 +555,7 @@ createCohortTb <- function(inDir, inFileNm, inFileExt, outDir
     
     
     write.table(dtCohFinal1
-                , paste0(outDir, 'dt_', cohortNm, '_', flag, '.csv')
+                , paste0(outDir, 'dt_', cohortNm, '_', flag, '_seed', seed, '.csv')
                 , sep=','
                 , row.names=F
                 , na=""

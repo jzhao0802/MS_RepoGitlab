@@ -35,6 +35,7 @@ main.varDefCati <- c('gender', 'birth_region')
 
 main.threshold4merge <- 0.1
 
+main.seedLst <- c(20, 123, 1234, 12345, 123456)
 outDir <- main.outDir
 inDir <- main.inDir
 cohortLst <- main.cohortLst
@@ -48,31 +49,36 @@ varDefCati <- main.varDefCati
 threshold <- main.threshold4merge
 
 
-# temp_re <- createCohortTb(inDir=main.inDir
-#                           , inFileNm=main.inFileNm
-#                           , inFileExt=main.inFileExt
-#                           , outDir=main.outDir
-#                           , cohortLst=main.cohortLst
-#                           , outcomeLst=main.outcomeLst
-#                           , bTransf=F
-#                           , na_represents=main.na_represents
-#                           , varDefCati=main.varDefCati
-#                           , threshold=main.threshold4merge
-#                           , bTest=main.bTest
-#                           , bQcMode = T)
+for(seed in main.seedLst){
+    temp_re1 <- createCohortTb(inDir=main.inDir
+                              , inFileNm=main.inFileNm
+                              , inFileExt=main.inFileExt
+                              , outDir=main.outDir
+                              , cohortLst=main.cohortLst
+                              , outcomeLst=main.outcomeLst
+                              , bTransf=F
+                              , na_represents=main.na_represents
+                              , varDefCati=main.varDefCati
+                              , threshold=main.threshold4merge
+                              , bTest=main.bTest
+                              , bQcMode = T
+                              , seed=seed)
+    
+    temp_re2 <- createCohortTb(inDir=main.inDir
+                              , inFileNm=main.inFileNm
+                              , inFileExt=main.inFileExt
+                              , outDir=main.outDir
+                              , cohortLst=main.cohortLst
+                              , outcomeLst=main.outcomeLst
+                              , bTransf=T
+                              , na_represents=main.na_represents
+                              , varDefCati=main.varDefCati
+                              , threshold=main.threshold4merge
+                              , bTest=main.bTest
+                              , bQcMode = T
+                              , seed = seed)
+}
 
-temp_re <- createCohortTb(inDir=main.inDir
-                          , inFileNm=main.inFileNm
-                          , inFileExt=main.inFileExt
-                          , outDir=main.outDir
-                          , cohortLst=main.cohortLst
-                          , outcomeLst=main.outcomeLst
-                          , bTransf=T
-                          , na_represents=main.na_represents
-                          , varDefCati=main.varDefCati
-                          , threshold=main.threshold4merge
-                          , bTest=main.bTest
-                          , bQcMode = T)
 
 
 
