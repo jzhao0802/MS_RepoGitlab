@@ -4,7 +4,7 @@ rm(list=ls())
 library(dplyr)
 library(plyr)
 
-inputDir <- "C:\\work\\working materials\\MS\\result\\Jul05\\cohort_jie\\2016-07-05 10.04.22\\"
+inputDir <- "F:\\Jie\\MS\\02_Code\\MS_Repo_Gitlab\\03_CohortData\\2016-07-07 08.00.52\\"
 
 # main.cohortNames <- c("Cmp", "BConti", "B2B", "B2Fir", "B2Sec")
 main.cohortNames <- c("Cmp")
