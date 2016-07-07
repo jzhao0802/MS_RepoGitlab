@@ -20,7 +20,7 @@ main.bTest <- F
 main.inFileNm <- "MS_decsupp_analset_20160630"
 main.inFileExt <- ".csv"
 
-main.cohortLst <- 1:5
+main.cohortLst <- 5
 
 main.outcomeLst <- c("edssprog"
                      , 'edssconf3'
