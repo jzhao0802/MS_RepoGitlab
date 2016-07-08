@@ -20,7 +20,7 @@ main.bTest <- F
 main.inFileNm <- "MS_decsupp_analset_20160701"
 main.inFileExt <- ".csv"
 
-main.cohortLst <- 1:5
+main.cohortLst <- 5
 
 main.outcomeLst <- c("edssprog"
                      , 'edssconf3'
@@ -35,8 +35,8 @@ main.varDefCati <- c('gender', 'birth_region')
 
 main.threshold4merge <- 0.1
 
-# main.seedLst <- c(20, 123, 1234, 12345, 123456)
-main.seedLst <- c(20)
+main.seedLst <- c(20, 123, 1234, 12345, 123456)
+# main.seedLst <- c(20)
 
 outDir <- main.outDir
 inDir <- main.inDir
