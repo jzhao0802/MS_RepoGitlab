@@ -17,7 +17,7 @@ main.outDir <- paste("./03_CohortData/",  main.timeStamp, "/", sep = '')
 dir.create(main.outDir, showWarnings = TRUE, recursive = TRUE, mode = "0777")
 main.bTransf <- T
 main.bTest <- F
-main.inFileNm <- "MS_decsupp_analset_20160630"
+main.inFileNm <- "MS_decsupp_analset_20160701"
 main.inFileExt <- ".csv"
 
 main.cohortLst <- 5
