@@ -4,16 +4,16 @@ rm(list=ls())
 library(dplyr)
 library(plyr)
 
-inputDir <- "F:\\Jie\\MS\\02_Code\\MS_Repo_Gitlab\\03_CohortData\\2016-07-08 02.16.04\\"
+inputDir <- "F:\\Jie\\MS\\02_Code\\MS_Repo_Gitlab\\03_CohortData\\2016-07-08 02.34.25\\"
 
-main.cohortNames <- c("Cmp", "BConti", "B2B", "B2Fir", "B2Sec")
-# main.cohortNames <- c("Cmp")
+# main.cohortNames <- c("Cmp", "BConti", "B2B", "B2Fir", "B2Sec")
+main.cohortNames <- c("Cmp")
 
 na.representations<- c('', 'NA', 'unknown', 'ambiguous')
 main.outcomes <- c("relapse_fu_any_01", "edssprog", "edssconf3",
                    "relapse_or_prog", "relapse_and_prog", "relapse_or_conf")
-# seedLst <- c(20, 123, 1234, 12345, 123456)
-seedLst <- c(20)
+seedLst <- c(20, 123, 1234, 12345, 123456)
+# seedLst <- c(20)
 
 binCateVars <- c(
   "avl_idx_alem", "avl_idx_fing", "avl_idx_tecf", "avl_idx_teri", 
