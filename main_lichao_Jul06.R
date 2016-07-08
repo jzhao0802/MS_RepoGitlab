@@ -223,6 +223,7 @@ for (cohortName in main.cohortNames)
             stop("the record number in two version cohort datasets are not consistent!\n\n")
         }
         processed$record_num <- rawDataOrgVars$record_num
+        processed$new_pat_id <- rawDataOrgVars$new_pat_id
         
         write.table(processed, 
                     paste0(resultDir, cohortName, '_seed', seed, ".csv"), 
