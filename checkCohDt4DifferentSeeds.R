@@ -2,7 +2,7 @@
 rm(list=ls())
 library(dplyr)
 
-inDir <- "F:\\Jie\\MS\\02_Code\\MS_Repo_Gitlab\\03_CohortData\\2016-07-07 09.21.24\\2016-07-07 09.35.26\\"
+inDir <- "F:\\Jie\\MS\\02_Code\\MS_Repo_Gitlab\\03_CohortData\\2016-07-08 02.34.25\\2016-07-08 02.48.09\\"
 
 cohDtFileLst <- list.files(inDir, full.names = T)
 
